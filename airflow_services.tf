@@ -3,12 +3,12 @@ resource "aws_ecs_service" "airflow_webserver" {
   name                               = "airflow-webserver"
   cluster                            = aws_ecs_cluster.airflow_cluster.arn
   task_definition                    = aws_ecs_task_definition.airflow_webserver.arn
-  deployment_maximum_percent         = "200"
-  deployment_minimum_healthy_percent = "100"
-  desired_count                      = "1"
+  deployment_maximum_percent         = 200
+  deployment_minimum_healthy_percent = 100
+  desired_count                      = 1
   enable_ecs_managed_tags            = "true"
   enable_execute_command             = "false"
-  health_check_grace_period_seconds  = "360"
+  health_check_grace_period_seconds  = 180
   platform_version                   = "LATEST"
   propagate_tags                     = "TASK_DEFINITION"
   scheduling_strategy                = "REPLICA"
@@ -19,9 +19,9 @@ resource "aws_ecs_service" "airflow_webserver" {
   ]
 
   capacity_provider_strategy {
-    base              = "0"
+    base              = 0
     capacity_provider = "FARGATE"
-    weight            = "1"
+    weight            = 1
   }
 
   deployment_circuit_breaker {
@@ -35,7 +35,7 @@ resource "aws_ecs_service" "airflow_webserver" {
 
   load_balancer {
     container_name   = "airflow-webserver"
-    container_port   = "8080"
+    container_port   = 8080
     target_group_arn = aws_lb_target_group.airflow_web_target.arn
   }
 
@@ -65,9 +65,9 @@ resource "aws_ecs_service" "airflow_control_plane" {
   name                               = each.key
   cluster                            = aws_ecs_cluster.airflow_cluster.arn
   task_definition                    = local.airflow_control_plane_arns[each.key]
-  deployment_maximum_percent         = "200"
-  deployment_minimum_healthy_percent = "100"
-  desired_count                      = "1"
+  deployment_maximum_percent         = 200
+  deployment_minimum_healthy_percent = 100
+  desired_count                      = 1
   enable_ecs_managed_tags            = "true"
   enable_execute_command             = "false"
   platform_version                   = "LATEST"
@@ -81,9 +81,9 @@ resource "aws_ecs_service" "airflow_control_plane" {
   ]
 
   capacity_provider_strategy {
-    base              = "0"
+    base              = 0
     capacity_provider = "FARGATE"
-    weight            = "1"
+    weight            = 1
   }
 
   deployment_circuit_breaker {

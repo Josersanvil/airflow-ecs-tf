@@ -1,8 +1,7 @@
-resource "aws_acm_certificate" "airflow_domain" {
-  count       = var.route_53_domain_name != null ? 1 : 0
-  domain      = var.airflow_web_subomain != "" ? "${var.airflow_web_subomain}.${var.route_53_domain_name}" : var.route_53_domain_name
-  statuses    = ["ISSUED"]
-  most_recent = true
+
+data "aws_route53_zone" "airflow-domain" {
+  count = var.route_53_domain_name != null ? 1 : 0
+  name  = var.route_53_domain_name
 }
 
 resource "aws_lb" "airflow-alb" {
@@ -50,12 +49,16 @@ resource "aws_alb_listener" "https_forward" {
   protocol          = "HTTPS"
 
   ssl_policy      = "ELBSecurityPolicy-2016-08"
-  certificate_arn = data.aws_acm_certificate.airflow_domain[0].arn
+  certificate_arn = aws_acm_certificate.airflow_domain[0].arn
 
   default_action {
     target_group_arn = aws_lb_target_group.airflow_web_target.id
     type             = "forward"
   }
+
+  depends_on = [
+    aws_acm_certificate_validation.airflow_domain_validation[0]
+  ]
 }
 
 
@@ -96,12 +99,37 @@ resource "aws_lb_target_group" "airflow_web_target" {
   ]
 }
 
-# Add dns record for the load balancer:
+# Add dns record for the certificate validation:
+resource "aws_acm_certificate" "airflow_domain" {
+  count             = var.route_53_domain_name != null ? 1 : 0
+  domain_name       = var.airflow_web_subomain != "" ? "${var.airflow_web_subomain}.${var.route_53_domain_name}" : var.route_53_domain_name
+  validation_method = "DNS"
 
-data "aws_route53_zone" "airflow-domain" {
-  count = var.route_53_domain_name != null ? 1 : 0
-  name  = var.route_53_domain_name
+  lifecycle {
+    create_before_destroy = true
+  }
 }
+
+resource "aws_route53_record" "airflow_domain_validation" {
+  count   = var.route_53_domain_name != null ? 1 : 0
+  name    = tolist(aws_acm_certificate.airflow_domain[0].domain_validation_options)[0].resource_record_name
+  type    = tolist(aws_acm_certificate.airflow_domain[0].domain_validation_options)[0].resource_record_type
+  zone_id = data.aws_route53_zone.airflow-domain[0].zone_id
+  records = [
+    tolist(aws_acm_certificate.airflow_domain[0].domain_validation_options)[0].resource_record_value
+  ]
+  ttl = 60
+}
+
+resource "aws_acm_certificate_validation" "airflow_domain_validation" {
+  count           = var.route_53_domain_name != null ? 1 : 0
+  certificate_arn = aws_acm_certificate.airflow_domain[0].arn
+  validation_record_fqdns = [
+    aws_route53_record.airflow_domain_validation[0].fqdn
+  ]
+}
+
+# Add dns record for the load balancer:
 
 resource "aws_route53_record" "airflow-record" {
   count = var.route_53_domain_name != null ? 1 : 0
