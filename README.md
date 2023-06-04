@@ -77,6 +77,14 @@ module "airflow" {
 
 Then run `terraform init` and `terraform apply` to deploy the infrastructure.
 
+The module will output the following values:
+
+- `airflow_web_server_hostname`: The hostname of the Airflow Webserver. If a Route53 domain name is provided, this will be the domain name. Otherwise, it will be the DNS name of the Application Load Balancer.
+- `airflow_deployment_id`: An unique ID of 6 characters used on the deployment of the infrastructure.
+- `rds_master_user_secret_arn`: The ARN of the AWS Secrets Manager secret that contains the master user password for the RDS database.
+
+You can use the `airflow_web_server_hostname` output to access the Airflow Web UI, the admin username is `airflow` and the password is the one provided in the `airflow_web_admin_password` parameter.
+
 ## Customize the Airflow Docker Image
 
 By default the module uses the `latest` tag of the [apache/airflow](https://hub.docker.com/r/apache/airflow) Docker image. You can customize the image by setting the parameters `airflow_image` and `airflow_image_tag` of the module.

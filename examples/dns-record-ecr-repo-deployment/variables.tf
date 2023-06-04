@@ -9,3 +9,13 @@ variable "admin_password" {
   type        = string
   sensitive   = true
 }
+
+variable "domain_name" {
+  description = "Route53 Domain name to use for accesing the Airflow Webserver"
+  type        = string
+}
+
+variable "airflow_repo_name" {
+  description = "Name of the ECR repository to use for storing the Airflow Docker image"
+  type        = string
+}

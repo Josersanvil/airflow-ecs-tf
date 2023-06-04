@@ -1,4 +1,6 @@
-  
+# Ignore lock file (Do not use in a multi-contributor environment)
+*.lock.hcl
+
 # Local .terraform directories
 **/.terraform/*
 

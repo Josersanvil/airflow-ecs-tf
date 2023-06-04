@@ -1,6 +1,6 @@
-data "aws_acm_certificate" "airflow_domain" {
+resource "aws_acm_certificate" "airflow_domain" {
   count       = var.route_53_domain_name != null ? 1 : 0
-  domain      = "*.${var.route_53_domain_name}"
+  domain      = var.airflow_web_subomain != "" ? "${var.airflow_web_subomain}.${var.route_53_domain_name}" : var.route_53_domain_name
   statuses    = ["ISSUED"]
   most_recent = true
 }
