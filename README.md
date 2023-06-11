@@ -16,12 +16,14 @@ The resources created by this infrastructure are:
   - **Redis**, used as the Celery message broker.
 - An **RDS Postgres database** for the Airflow metadata database
 - An **EFS Filesystem** for Container storage
-- A **Application Load Balancer** for the Airflow Webserver
+- A **Application Load Balancer** for the Airflow Webserver (unless `custom_load_balancer_arns` is provided)
 - **Auto Scaling policies** for the Airflow Webserver and Scheduler
 
 The Worker does not have an Auto Scaling policy, consider using the [Amazon ECS Operators](https://airflow.apache.org/docs/apache-airflow-providers-amazon/stable/operators/ecs.html#) in your Airflow DAGs to avoid using too many worker resources.
 
-Optionally, a Route53 Domain name can be provided to create a DNS record for the Airflow Webserver. The DNS record will be created as a CNAME record pointing to the Application Load Balancer. This will also create a TLS certificate for the domain using [AWS Certificate Manager](https://aws.amazon.com/certificate-manager/) and attach it to an Application Load Balancer HTTPS listener.
+A Route53 domain name can be provided to create a DNS record for the Airflow Webserver. The DNS record will be created pointing to the Application Load Balancer. This will also create a TLS certificate for the domain using [AWS Certificate Manager](https://aws.amazon.com/certificate-manager/) and attach it to an Application Load Balancer HTTPS listener.
+
+For more advanced usages take a look at the [examples folder](./examples/).
 
 ## Module Usage
 

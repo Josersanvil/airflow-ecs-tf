@@ -32,7 +32,8 @@ resource "random_password" "airflow_webserver_secret_key" {
 }
 
 locals {
-  deployment_id = random_string.deployment_id.result
+  deployment_id        = random_string.deployment_id.result
+  airflow_web_hostname = var.route_53_domain_name == null ? var.custom_load_balancer_arn == null ? aws_lb.airflow-alb[0].dns_name : data.aws_lb.custom_lb[0].dns_name : aws_route53_record.airflow-record[0].fqdn
   environment_vars = [
     {
       name  = "AIRFLOW__CORE__EXECUTOR"
@@ -100,7 +101,7 @@ locals {
     },
     {
       name  = "AIRFLOW_VAR_AIRFLOW_DEPLOYMENT_WEB_SERVER_HOSTNAME"
-      value = var.route_53_domain_name != null ? aws_route53_record.airflow-record[0].fqdn : aws_lb.airflow-alb.dns_name
+      value = local.airflow_web_hostname
     }
   ]
 }

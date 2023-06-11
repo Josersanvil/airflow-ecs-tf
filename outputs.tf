@@ -10,5 +10,10 @@ output "airflow_deployment_id" {
 
 output "airflow_web_server_hostname" {
   description = "Hostname of the Airflow Webserver"
-  value       = var.route_53_domain_name != null ? aws_route53_record.airflow-record[0].fqdn : aws_lb.airflow-alb.dns_name
+  value       = local.airflow_web_hostname
+}
+
+output "airflow_web_target_group_arn" {
+  description = "ARN of the Airflow Webserver Target Group"
+  value       = aws_lb_target_group.airflow_web_target.arn
 }

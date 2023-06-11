@@ -42,10 +42,10 @@ resource "aws_ecs_task_definition" "airflow_webserver" {
       environment = local.environment_vars
       healthCheck = {
         command     = ["CMD-SHELL", "curl -f http://localhost:8080/health || exit 1"]
-        interval    = 10
-        retries     = 5
-        startPeriod = 30
-        timeout     = 10
+        interval    = 30
+        retries     = 3
+        startPeriod = 60
+        timeout     = 5
       }
     }
   ])

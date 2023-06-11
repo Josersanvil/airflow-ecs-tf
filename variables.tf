@@ -43,7 +43,7 @@ variable "route_53_domain_name" {
   default     = null
 }
 
-variable "airflow_web_subomain" {
+variable "airflow_web_subdomain" {
   description = "Subdomain to use for the Airflow Webserver (such as 'airflow' so is accessible at 'airflow.myorganization.com'). If not provided, the Webserver will be exposed through the Route 53 domain name"
   type        = string
   default     = ""
@@ -83,4 +83,8 @@ variable "airflow_scheduler_scale_max_capacity" {
   description = "Maximum scaling capacity to have of Airflow Scheduler ECS services"
   type        = number
   default     = 4
+}
+
+variable "custom_load_balancer_arn" {
+  description = "ARN of a load balancer to use for exposing the Airflow Webserver. If not provided, a new load balancer will be created"
 }
