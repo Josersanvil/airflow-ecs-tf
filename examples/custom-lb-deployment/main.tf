@@ -1,6 +1,3 @@
-# This example deploys the Web Server with a DNS record pointing to airflow.<domain name>.com
-# and uses an ECR repository where a custom Airflow Docker image can be stored.
-
 terraform {
   required_providers {
     aws = {
