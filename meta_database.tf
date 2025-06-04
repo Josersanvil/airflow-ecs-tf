@@ -41,7 +41,7 @@ resource "aws_rds_cluster" "airflow_db" {
   backup_retention_period         = 7
   copy_tags_to_snapshot           = true
   database_name                   = "airflow"
-  db_cluster_parameter_group_name = "default.aurora-postgresql"
+  db_cluster_parameter_group_name = "default.aurora-postgresql17"
   deletion_protection             = false
   enable_http_endpoint            = false
   engine                          = "aurora-postgresql"
