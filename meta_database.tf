@@ -41,12 +41,12 @@ resource "aws_rds_cluster" "airflow_db" {
   backup_retention_period         = 7
   copy_tags_to_snapshot           = true
   database_name                   = "airflow"
-  db_cluster_parameter_group_name = "default.aurora-postgresql13"
+  db_cluster_parameter_group_name = "default.aurora-postgresql"
   deletion_protection             = false
   enable_http_endpoint            = false
   engine                          = "aurora-postgresql"
   engine_mode                     = "provisioned"
-  engine_version                  = "13.8"
+  engine_version                  = "17.4"
   port                            = 5432
   preferred_backup_window         = "02:00-03:00"
   preferred_maintenance_window    = "sun:05:00-sun:06:00"
@@ -64,10 +64,10 @@ resource "aws_rds_cluster" "airflow_db" {
 }
 
 resource "aws_rds_cluster_instance" "airflow_db_instance" {
-  identifier          = "airflow-db-instance-${local.deployment_id}"
-  cluster_identifier  = aws_rds_cluster.airflow_db.id
-  engine              = aws_rds_cluster.airflow_db.engine
-  engine_version      = aws_rds_cluster.airflow_db.engine_version
-  instance_class      = "db.serverless"
-  promotion_tier      = 1
+  identifier         = "airflow-db-instance-${local.deployment_id}"
+  cluster_identifier = aws_rds_cluster.airflow_db.id
+  engine             = aws_rds_cluster.airflow_db.engine
+  engine_version     = aws_rds_cluster.airflow_db.engine_version
+  instance_class     = "db.serverless"
+  promotion_tier     = 1
 }
